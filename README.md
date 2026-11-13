@@ -95,7 +95,7 @@ Required values in `doctor-tracker-api/.env`:
 
 | Variable | Example | Notes |
 |---|---|---|
-| `MONGODB_URI` | `mongodb+srv://user:pass@cluster.mongodb.net/?retryWrites=true&w=majority` | Your Atlas connection string |
+| `MONGODB_URI` | `mongodb+srv://<user>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority` | Your Atlas connection string |
 | `JWT_SECRET` | 64+ random chars | `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
 | `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` | `admin@doctortracker.app` / `CareGuide@2026` | Demo account created by the seed |
 
