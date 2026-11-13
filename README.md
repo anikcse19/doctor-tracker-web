@@ -11,7 +11,7 @@
 
 > The API runs on Render's free tier and sleeps after 15 minutes idle. The first request can take up to ~50 s; the login page detects this and shows a "waking up the server" notice.
 
-![Dashboard](docs/screenshots/dashboard.png)
+![Dashboard — dark glass theme](docs/screenshots/dashboard.webp)
 
 ---
 
@@ -40,11 +40,15 @@ Doctor Tracker gives a healthcare administrator one clear view of their care net
 
 **Authentication** — HttpOnly-cookie session, protected routes (edge `proxy.ts` guard + server-side verification), session-expiry handling, sign-out that wipes all cached data, brute-force rate limiting.
 
-**Doctors** — create & edit · list with debounced search (name/email/phone/hospital) · filter by specialization, hospital and joined-date range · sort · server-side pagination · profile page with live stats (patient count, most common condition, latest registration, gender mix) · the doctor's own patient list with add / edit / delete.
+**Doctors** — create & edit · list with debounced search (name/email/phone/hospital) · **multi-select** filters for specialty and hospital, joined-date range · sort · server-side pagination · profile page with live stats (patient count, most common condition, latest registration, gender mix) · the doctor's own patient list with add / edit / delete.
 
-**Patients** — list across all doctors · search (name/phone/email/condition) · filter by medical condition, gender, registration-date range · sort · pagination · detail page with assigned doctor · edit (including reassigning to another doctor) · delete with confirmation.
+**Patients** — list across all doctors · search (name/phone/email/condition) · **multi-select** filters for medical condition and gender, registration-date range · sort · pagination · detail page with assigned doctor · edit (including reassigning to another doctor) · delete with confirmation.
 
 **Dashboard** — KPI tiles (patients, doctors, 30-day registrations with % change, average caseload) · registration trend (30 days / 90 days / 6 months, Asia/Dhaka buckets) · patients per doctor · doctors by specialization · top conditions · gender split · age distribution · recent registrations · derived "network at a glance" facts.
+
+**Look & feel** — a "premium glass" design system: frosted translucent surfaces over an ambient teal/indigo glow, **dark theme by default with a Light / Dark / System switch** (no flash on load), a floating sidebar, and validated chart palettes for both themes.
+
+**Power-user UX** — **⌘K / Ctrl+K command menu** (live search across doctors and patients, navigation, "add doctor", theme and sign-out actions) · **filter chips** that open searchable checklists and show the active values inline (`Condition | Asthma · COPD`) · searchable comboboxes in forms (pick a doctor out of dozens by typing) · segmented controls for small choices · **subtle motion**: page fade-ins, staggered cards, count-up KPI numbers, hover lifts — all disabled under `prefers-reduced-motion`.
 
 **UX** — skeleton loaders shaped like the real content, designed empty states (distinguishing "no data yet" from "no results for these filters"), toast feedback, confirmation dialogs, inline server-side validation errors (e.g. duplicate email), URL-synced filters (shareable & back-button friendly), responsive layouts with card lists on mobile, keyboard-accessible Radix primitives, skip link, visible focus rings.
 
@@ -60,6 +64,8 @@ Doctor Tracker gives a healthcare administrator one clear view of their care net
 | URL state | **nuqs** | Type-safe search-param state for filters/sort/page |
 | Forms | **React Hook Form + Zod** | Uncontrolled inputs (few re-renders) + schemas mirroring the API |
 | Charts | **Recharts** (via shadcn chart wrappers) | Composable SVG charts with accessible tooltips |
+| Command menu & facets | **cmdk** (shadcn Command) | Accessible, keyboard-first searchable lists for ⌘K, filter chips and comboboxes |
+| Theming | **next-themes** | Class-based dark/light/system with a pre-hydration script (no theme flash) |
 | Misc | sonner (toasts), lucide-react (icons), date-fns | Small, tree-shakable |
 
 Backend: **Express 5 · MongoDB Atlas · Mongoose 9 · Zod** — see the [API README](https://github.com/anikcse19/doctor-tracker-api#readme).
@@ -223,7 +229,7 @@ There is almost no *client-owned* global state in an admin CRUD app. Instead of 
 | State | Home | Why |
 |---|---|---|
 | Server data (lists, details, options) | **TanStack Query** | It's a cache of the server, not app state: de-duplication, background refresh, retries (but never on 4xx), and invalidation by key prefix |
-| Filters, search, sort, page, page size | **The URL** (nuqs) | Shareable links (`/patients?condition=Asthma&gender=female`), survives refresh, back button works, and the dashboard can deep-link into a filtered list |
+| Filters, search, sort, page, page size | **The URL** (nuqs) | Shareable links (`/patients?condition=Asthma,COPD&gender=female`), survives refresh, back button works, and the dashboard can deep-link into a filtered list |
 | Form state | **React Hook Form** | Uncontrolled inputs → re-render only on validation, not every keystroke |
 | Dashboard data | **Server Component** | Computed per request on the server; no client cache needed, no loading waterfall |
 
@@ -241,33 +247,45 @@ Offset pagination (`page`/`limit`, `limit ≤ 100`) with `find` and `countDocume
 
 All screenshots are from the **live deployment** with seeded data.
 
-### Desktop
+### Dark theme (default)
 
 | Sign in | Dashboard |
 |---|---|
-| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+| ![Login](docs/screenshots/login.webp) | ![Dashboard](docs/screenshots/dashboard.webp) |
 
-| Doctors | Filtered by specialization |
+| Filter chips — multi-select with search | ⌘K command menu — live record search |
 |---|---|
-| ![Doctors](docs/screenshots/doctors.png) | ![Doctors filtered](docs/screenshots/doctors-filtered.png) |
+| ![Filter chips](docs/screenshots/filter-chips.webp) | ![Command menu](docs/screenshots/command-menu.webp) |
 
-| Doctor profile & patient list | Add patient — validation |
+| Doctors filtered by specialty | Doctor profile & patient list |
 |---|---|
-| ![Doctor detail](docs/screenshots/doctor-detail.png) | ![Validation](docs/screenshots/add-patient-validation.png) |
+| ![Doctors filtered](docs/screenshots/doctors-filtered.webp) | ![Doctor detail](docs/screenshots/doctor-detail.webp) |
 
-| Patients filtered by condition | Patient record |
+| Add doctor — searchable specialty combobox | Add patient — validation |
 |---|---|
-| ![Patients](docs/screenshots/patients-filtered.png) | ![Patient detail](docs/screenshots/patient-detail.png) |
+| ![Add doctor](docs/screenshots/add-doctor-form.webp) | ![Validation](docs/screenshots/add-patient-validation.webp) |
 
-| Delete confirmation | Empty search state |
-|---|---|
-| ![Delete](docs/screenshots/delete-confirm.png) | ![Empty](docs/screenshots/empty-state.png) |
+| Patient record | Delete confirmation | Empty search state |
+|---|---|---|
+| ![Patient detail](docs/screenshots/patient-detail.webp) | ![Delete](docs/screenshots/delete-confirm.webp) | ![Empty](docs/screenshots/empty-state.webp) |
+
+<details>
+<summary>Full-length dashboard</summary>
+
+![Full dashboard](docs/screenshots/dashboard-full.webp)
+</details>
+
+### Light theme
+
+| Sign in | Dashboard | Doctors |
+|---|---|---|
+| ![Light login](docs/screenshots/light-login.webp) | ![Light dashboard](docs/screenshots/light-dashboard.webp) | ![Light doctors](docs/screenshots/light-doctors.webp) |
 
 ### Tablet & mobile
 
 | Tablet dashboard | Mobile dashboard | Mobile doctors | Mobile patients | Mobile navigation |
 |---|---|---|---|---|
-| ![Tablet](docs/screenshots/tablet-dashboard.png) | ![Mobile dashboard](docs/screenshots/mobile-dashboard.png) | ![Mobile doctors](docs/screenshots/mobile-doctors.png) | ![Mobile patients](docs/screenshots/mobile-patients.png) | ![Mobile nav](docs/screenshots/mobile-nav.png) |
+| ![Tablet](docs/screenshots/tablet-dashboard.webp) | ![Mobile dashboard](docs/screenshots/mobile-dashboard.webp) | ![Mobile doctors](docs/screenshots/mobile-doctors.webp) | ![Mobile patients](docs/screenshots/mobile-patients.webp) | ![Mobile nav](docs/screenshots/mobile-nav.webp) |
 
 ---
 
@@ -291,12 +309,12 @@ All screenshots are from the **live deployment** with seeded data.
 
 ## Accessibility
 
-Radix primitives (keyboard support, focus management, ARIA) · skip-to-content link · labelled inputs with errors linked to fields · `aria-current` navigation · charts paired with direct value labels or text summaries, a colour-blind-validated categorical palette, and a single brand hue for magnitude charts · changes vs. previous period shown with arrow + sign + text, not colour alone.
+Both themes keep text contrast within WCAG AA; overlays use near-opaque frosted surfaces so text never sits on busy content; all motion respects `prefers-reduced-motion`. Radix primitives (keyboard support, focus management, ARIA) · skip-to-content link · labelled inputs with errors linked to fields · `aria-current` navigation · charts paired with direct value labels or text summaries, a colour-blind-validated categorical palette, and a single brand hue for magnitude charts · changes vs. previous period shown with arrow + sign + text, not colour alone.
 
 ## Testing & quality
 
 - `tsc --noEmit` and ESLint clean; production build passes.
-- **End-to-end browser run against the live deployment** (Playwright driving Chrome): wrong-password error → login → create doctor → duplicate-email inline 409 → debounced search → add patient → edit & reassign → filter → delete with confirmation → sign-out → protected-route redirect. All steps pass with no application console errors.
+- **End-to-end browser run against the live deployment (re-run after the UI redesign)** (Playwright driving Chrome): wrong-password error → login → create doctor → duplicate-email inline 409 → debounced search → add patient → edit & reassign → filter → delete with confirmation → sign-out → protected-route redirect. All steps pass with no application console errors.
 - Visual checks at 1440 px, 820 px and 390 px widths.
 
 ## Project structure
@@ -313,8 +331,8 @@ src/
 ├─ proxy.ts                          route guard (cookie presence)
 ├─ components/
 │  ├─ ui/                            themed shadcn/Radix primitives
-│  ├─ shared/                        design-system building blocks
-│  └─ layout/                        sidebar, mobile nav, user menu
+│  ├─ shared/                        design-system blocks: filter chips, combobox, count-up, list card…
+│  └─ layout/                        sidebar, ⌘K command menu, theme toggle, mobile nav, user menu
 ├─ features/
 │  ├─ auth/        hooks, login form, session state
 │  ├─ doctors/     api hooks, schema, list/detail views, form dialog, URL params
