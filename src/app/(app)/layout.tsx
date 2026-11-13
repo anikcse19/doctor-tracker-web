@@ -18,17 +18,20 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
         Skip to content
       </a>
 
-      <aside className="bg-sidebar text-sidebar-foreground sticky top-0 hidden h-dvh flex-col lg:flex">
-        <div className="flex h-16 items-center px-5">
-          <Link href="/dashboard" className="rounded-md text-white">
-            <Logo />
-          </Link>
-        </div>
-        <div className="flex-1 overflow-y-auto px-3 py-4">
-          <SidebarNav />
-        </div>
-        <div className="border-sidebar-border border-t p-3">
-          <UserMenu />
+      {/* Outer aside fills the full column height; inner panel stays pinned while content scrolls. */}
+      <aside className="bg-sidebar text-sidebar-foreground hidden lg:block">
+        <div className="sticky top-0 flex h-dvh flex-col">
+          <div className="flex h-16 items-center px-5">
+            <Link href="/dashboard" className="rounded-md text-white">
+              <Logo />
+            </Link>
+          </div>
+          <div className="flex-1 overflow-y-auto px-3 py-4">
+            <SidebarNav />
+          </div>
+          <div className="border-sidebar-border border-t p-3">
+            <UserMenu />
+          </div>
         </div>
       </aside>
 
@@ -39,7 +42,10 @@ export default function AppLayout({ children }: LayoutProps<'/'>) {
             <Logo />
           </Link>
         </header>
-        <main id="main" className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+        <main
+          id="main"
+          className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8"
+        >
           {children}
         </main>
       </div>

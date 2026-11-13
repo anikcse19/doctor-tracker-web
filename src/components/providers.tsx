@@ -6,10 +6,16 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { ApiError } from '@/lib/api/errors';
+import { sessionState } from '@/features/auth/session-state';
 
 /** Any 401 from the API means the session is gone → send the user to sign in again. */
 function handleUnauthorized(error: unknown) {
-  if (error instanceof ApiError && error.isUnauthorized && window.location.pathname !== '/login') {
+  if (
+    error instanceof ApiError &&
+    error.isUnauthorized &&
+    !sessionState.signingOut &&
+    window.location.pathname !== '/login'
+  ) {
     const next = encodeURIComponent(window.location.pathname + window.location.search);
     // Intentionally a full reload (not router.push): it discards every in-memory React/query
     // state so no patient data from the expired session survives.

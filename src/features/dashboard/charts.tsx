@@ -56,6 +56,7 @@ export function RegistrationTrendChart({ trend }: { trend: DashboardStats['trend
           strokeWidth={2}
           fill="url(#trendFill)"
           activeDot={{ r: 5, strokeWidth: 2, stroke: 'var(--card)' }}
+          animationDuration={600}
         />
       </AreaChart>
     </ChartContainer>
@@ -86,7 +87,7 @@ export function SpecializationChart({ data }: { data: DashboardStats['specializa
           tick={{ ...AXIS_TICK, fill: 'var(--muted-foreground)' }}
         />
         <ChartTooltip cursor={{ fill: 'var(--muted)' }} content={<ChartTooltipContent hideIndicator />} />
-        <Bar dataKey="count" fill="var(--color-count)" radius={[0, 4, 4, 0]} maxBarSize={16} />
+        <Bar dataKey="count" fill="var(--color-count)" radius={[0, 4, 4, 0]} maxBarSize={16} animationDuration={600} />
       </BarChart>
     </ChartContainer>
   );
@@ -107,7 +108,7 @@ export function AgeDistributionChart({ data }: { data: DashboardStats['ageGroups
           cursor={{ fill: 'var(--muted)' }}
           content={<ChartTooltipContent hideIndicator labelFormatter={(label) => `Age ${label}`} />}
         />
-        <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} maxBarSize={36} />
+        <Bar dataKey="count" fill="var(--color-count)" radius={[4, 4, 0, 0]} maxBarSize={36} animationDuration={600} />
       </BarChart>
     </ChartContainer>
   );

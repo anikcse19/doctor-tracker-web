@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { api } from '@/lib/api/client';
 import type { Admin } from '@/lib/api/types';
+import { sessionState } from './session-state';
 
 export const authKeys = { me: ['auth', 'me'] as const };
 
@@ -22,7 +23,10 @@ export function useLogin() {
   return useMutation({
     mutationFn: (credentials: { email: string; password: string }) =>
       api.post<{ admin: Admin }>('/auth/login', credentials),
-    onSuccess: (data) => queryClient.setQueryData(authKeys.me, data),
+    onSuccess: (data) => {
+      sessionState.reset();
+      queryClient.setQueryData(authKeys.me, data);
+    },
   });
 }
 
@@ -31,6 +35,7 @@ export function useLogout() {
   const router = useRouter();
   return useMutation({
     mutationFn: () => api.post<void>('/auth/logout'),
+    onMutate: () => sessionState.beginSignOut(),
     onSettled: () => {
       // Drop every cached record so no patient data survives in memory after sign-out.
       queryClient.clear();

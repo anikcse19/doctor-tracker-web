@@ -4,12 +4,7 @@ import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-export const TREND_RANGES = [
-  { value: 30, label: '30D' },
-  { value: 90, label: '90D' },
-  { value: 180, label: '6M' },
-] as const;
+import { TREND_RANGES } from './constants';
 
 /** Range switcher: re-renders the server dashboard via the URL, inside a transition. */
 export function RangeTabs({ current }: { current: number }) {

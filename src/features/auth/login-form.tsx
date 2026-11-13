@@ -62,7 +62,7 @@ export function LoginForm() {
   const onSubmit = form.handleSubmit((values) => {
     login.mutate(values, {
       onSuccess: ({ admin }) => {
-        toast.success(`Welcome back, ${admin.name.split(' ')[0]}`);
+        toast.success(`Welcome back, ${admin.name}`);
         router.replace(safeNext(searchParams.get('next')));
         router.refresh();
       },

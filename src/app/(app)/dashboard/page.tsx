@@ -10,7 +10,8 @@ import { ChartCard } from '@/features/dashboard/chart-card';
 import { AgeDistributionChart, RegistrationTrendChart, SpecializationChart } from '@/features/dashboard/charts';
 import { GenderSplit } from '@/features/dashboard/gender-split';
 import { KpiCards } from '@/features/dashboard/kpi-cards';
-import { RangeTabs, TREND_RANGES } from '@/features/dashboard/range-tabs';
+import { TREND_RANGES } from '@/features/dashboard/constants';
+import { RangeTabs } from '@/features/dashboard/range-tabs';
 import { RecentPatients } from '@/features/dashboard/recent-patients';
 
 export const metadata: Metadata = { title: 'Dashboard' };
