@@ -11,7 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { ConditionTag, InitialsAvatar } from '@/components/shared/badges';
 import { GENDER_LABELS } from '@/lib/constants';
 import type { Patient } from '@/lib/api/types';
@@ -39,7 +46,9 @@ export function PatientsTable({ patients, onEdit, onDelete, showDoctor = true }:
             {showDoctor && <TableHead className="hidden lg:table-cell">Doctor</TableHead>}
             <TableHead className="hidden xl:table-cell">Phone</TableHead>
             <TableHead className="hidden lg:table-cell">Registered</TableHead>
-            <TableHead className="w-12"><span className="sr-only">Actions</span></TableHead>
+            <TableHead className="w-12">
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -60,7 +69,9 @@ export function PatientsTable({ patients, onEdit, onDelete, showDoctor = true }:
                     >
                       {patient.name}
                     </Link>
-                    <p className="text-muted-foreground truncate text-xs">{patient.email ?? 'No email'}</p>
+                    <p className="text-muted-foreground truncate text-xs">
+                      {patient.email ?? 'No email'}
+                    </p>
                   </div>
                 </div>
               </TableCell>
@@ -68,7 +79,9 @@ export function PatientsTable({ patients, onEdit, onDelete, showDoctor = true }:
                 {ageFromDob(patient.dateOfBirth)} yrs
                 <span className="text-muted-foreground"> · {GENDER_LABELS[patient.gender]}</span>
               </TableCell>
-              <TableCell className="max-w-48"><ConditionTag condition={patient.condition} /></TableCell>
+              <TableCell className="max-w-48">
+                <ConditionTag condition={patient.condition} />
+              </TableCell>
               {showDoctor && (
                 <TableCell className="hidden lg:table-cell">
                   <Link
@@ -78,7 +91,9 @@ export function PatientsTable({ patients, onEdit, onDelete, showDoctor = true }:
                   >
                     {patient.doctor.name}
                   </Link>
-                  <p className="text-muted-foreground truncate text-xs">{patient.doctor.specialization}</p>
+                  <p className="text-muted-foreground truncate text-xs">
+                    {patient.doctor.specialization}
+                  </p>
                 </TableCell>
               )}
               <TableCell className="text-muted-foreground tabular hidden xl:table-cell">

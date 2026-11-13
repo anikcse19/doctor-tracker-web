@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from 'next-themes';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
@@ -34,7 +35,8 @@ function makeQueryClient() {
         refetchOnWindowFocus: false,
         // Retry transient failures (e.g. a cold-starting server), never auth/validation errors.
         retry: (failureCount, error) =>
-          failureCount < 2 && !(error instanceof ApiError && error.status >= 400 && error.status < 500),
+          failureCount < 2 &&
+          !(error instanceof ApiError && error.status >= 400 && error.status < 500),
       },
     },
   });
@@ -45,13 +47,15 @@ export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(makeQueryClient);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <NuqsAdapter>
-        <TooltipProvider delayDuration={200}>
-          {children}
-          <Toaster position="top-right" richColors closeButton />
-        </TooltipProvider>
-      </NuqsAdapter>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+      <QueryClientProvider client={queryClient}>
+        <NuqsAdapter>
+          <TooltipProvider delayDuration={200}>
+            {children}
+            <Toaster position="top-right" richColors closeButton />
+          </TooltipProvider>
+        </NuqsAdapter>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

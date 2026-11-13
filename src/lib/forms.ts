@@ -21,5 +21,7 @@ export function applyServerErrors<T extends FieldValues>(
     }
     if (mapped) return;
   }
-  toast.error(error instanceof ApiError ? error.message : 'Something went wrong. Please try again.');
+  toast.error(
+    error instanceof ApiError ? error.message : 'Something went wrong. Please try again.',
+  );
 }

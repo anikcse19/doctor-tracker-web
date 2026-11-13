@@ -25,23 +25,30 @@ export function BarList({
             <div className="relative min-w-0 flex-1">
               <div
                 aria-hidden="true"
-                className="bg-chart-brand/12 absolute inset-y-0 left-0 rounded-md"
+                className="absolute inset-y-0 left-0 rounded-md bg-gradient-to-r from-teal-500/25 to-teal-500/5 dark:from-teal-400/25 dark:to-teal-400/5"
                 style={{ width: `${(item.value / max) * 100}%` }}
               />
               <div className="relative flex min-w-0 items-baseline gap-2 px-2.5 py-1.5">
                 <span className="truncate text-sm font-medium">{item.label}</span>
                 {item.sublabel && (
-                  <span className="text-muted-foreground hidden truncate text-xs sm:inline">{item.sublabel}</span>
+                  <span className="text-muted-foreground hidden truncate text-xs sm:inline">
+                    {item.sublabel}
+                  </span>
                 )}
               </div>
             </div>
-            <span className="tabular w-10 shrink-0 text-right text-sm font-semibold">{formatNumber(item.value)}</span>
+            <span className="tabular w-10 shrink-0 text-right text-sm font-semibold">
+              {formatNumber(item.value)}
+            </span>
           </>
         );
         return (
           <li key={item.key}>
             {item.href ? (
-              <Link href={item.href} className="hover:bg-muted/60 -mx-1 flex items-center gap-3 rounded-lg px-1">
+              <Link
+                href={item.href}
+                className="group hover:bg-muted/60 -mx-1 flex items-center gap-3 rounded-lg px-1 transition-colors"
+              >
                 {content}
               </Link>
             ) : (

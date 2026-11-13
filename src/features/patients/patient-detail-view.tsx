@@ -44,13 +44,17 @@ export function PatientDetailView() {
     return (
       <>
         <BackLink href="/patients">All patients</BackLink>
-        <div className="bg-card rounded-xl border">
+        <div className="glass page-enter rounded-2xl">
           {notFound ? (
             <EmptyState
               icon={SearchX}
               title="Patient not found"
               description="This record may have been deleted, or the link is incorrect."
-              action={<Button asChild variant="outline"><Link href="/patients">Back to patients</Link></Button>}
+              action={
+                <Button asChild variant="outline">
+                  <Link href="/patients">Back to patients</Link>
+                </Button>
+              }
             />
           ) : (
             <ErrorState error={error} onRetry={() => refetch()} />
@@ -74,12 +78,14 @@ export function PatientDetailView() {
       <BackLink href="/patients">All patients</BackLink>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_340px]">
-        <section className="bg-card rounded-xl border p-5 sm:p-6">
+        <section className="glass page-enter rounded-2xl p-5 sm:p-6">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
             <div className="flex items-center gap-4">
               <InitialsAvatar name={patient.name} className="size-14 text-base" />
               <div className="min-w-0 space-y-1.5">
-                <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">{patient.name}</h1>
+                <h1 className="truncate text-xl font-semibold tracking-tight sm:text-2xl">
+                  {patient.name}
+                </h1>
                 <p className="text-muted-foreground text-sm">
                   {ageFromDob(patient.dateOfBirth)} years · {GENDER_LABELS[patient.gender]}
                 </p>
@@ -107,19 +113,29 @@ export function PatientDetailView() {
           </div>
 
           <dl className="mt-6 grid gap-4 border-t pt-5 sm:grid-cols-2">
-            <InfoItem icon={Cake} label="Date of birth">{formatDate(patient.dateOfBirth)}</InfoItem>
-            <InfoItem icon={User} label="Gender">{GENDER_LABELS[patient.gender]}</InfoItem>
+            <InfoItem icon={Cake} label="Date of birth">
+              {formatDate(patient.dateOfBirth)}
+            </InfoItem>
+            <InfoItem icon={User} label="Gender">
+              {GENDER_LABELS[patient.gender]}
+            </InfoItem>
             <InfoItem icon={Phone} label="Phone">
-              <a href={`tel:${patient.phone}`} className="hover:underline">{formatPhone(patient.phone)}</a>
+              <a href={`tel:${patient.phone}`} className="hover:underline">
+                {formatPhone(patient.phone)}
+              </a>
             </InfoItem>
             <InfoItem icon={Mail} label="Email">
               {patient.email ? (
-                <a href={`mailto:${patient.email}`} className="hover:underline">{patient.email}</a>
+                <a href={`mailto:${patient.email}`} className="hover:underline">
+                  {patient.email}
+                </a>
               ) : (
                 <span className="text-muted-foreground font-normal">Not provided</span>
               )}
             </InfoItem>
-            <InfoItem icon={CalendarPlus} label="Registered">{formatDateTime(patient.createdAt)}</InfoItem>
+            <InfoItem icon={CalendarPlus} label="Registered">
+              {formatDateTime(patient.createdAt)}
+            </InfoItem>
           </dl>
 
           <div className="mt-6 border-t pt-5">
@@ -132,8 +148,10 @@ export function PatientDetailView() {
           </div>
         </section>
 
-        <aside className="bg-card h-fit rounded-xl border p-5">
-          <p className="text-muted-foreground mb-4 text-xs font-medium tracking-wide uppercase">Assigned doctor</p>
+        <aside className="glass page-enter h-fit rounded-2xl p-5">
+          <p className="text-muted-foreground mb-4 text-xs font-medium tracking-wide uppercase">
+            Assigned doctor
+          </p>
           <Link
             href={`/doctors/${patient.doctor._id}`}
             className="hover:bg-muted/50 -m-2 flex items-center gap-3 rounded-lg p-2"
@@ -146,11 +164,19 @@ export function PatientDetailView() {
             <ChevronRight className="text-muted-foreground size-4" aria-hidden="true" />
           </Link>
           <dl className="mt-5 space-y-4 border-t pt-5">
-            <InfoItem icon={Building2} label="Hospital">{patient.doctor.hospital}</InfoItem>
+            <InfoItem icon={Building2} label="Hospital">
+              {patient.doctor.hospital}
+            </InfoItem>
             {patient.doctor.phone && (
-              <InfoItem icon={Phone} label="Phone">{formatPhone(patient.doctor.phone)}</InfoItem>
+              <InfoItem icon={Phone} label="Phone">
+                {formatPhone(patient.doctor.phone)}
+              </InfoItem>
             )}
-            {patient.doctor.email && <InfoItem icon={Mail} label="Email">{patient.doctor.email}</InfoItem>}
+            {patient.doctor.email && (
+              <InfoItem icon={Mail} label="Email">
+                {patient.doctor.email}
+              </InfoItem>
+            )}
           </dl>
         </aside>
       </div>
@@ -162,8 +188,8 @@ export function PatientDetailView() {
         title="Delete patient?"
         description={
           <>
-            <span className="text-foreground font-medium">{patient.name}</span>&apos;s record will be permanently
-            removed. This cannot be undone.
+            <span className="text-foreground font-medium">{patient.name}</span>&apos;s record will
+            be permanently removed. This cannot be undone.
           </>
         }
         confirmLabel="Delete patient"

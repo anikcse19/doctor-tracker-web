@@ -26,8 +26,8 @@ function ActiveSidebarNav(props: Props) {
 
 function NavLinks({ onNavigate, pathname }: Props & { pathname: string | null }) {
   return (
-    <nav aria-label="Main" className="space-y-1">
-      <p className="text-sidebar-foreground/45 px-3 pb-2 text-[11px] font-medium tracking-[0.08em] uppercase">
+    <nav aria-label="Main" className="space-y-0.5">
+      <p className="text-muted-foreground/70 px-3 pb-2 text-[10.5px] font-semibold tracking-[0.12em] uppercase">
         Workspace
       </p>
       {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -39,19 +39,25 @@ function NavLinks({ onNavigate, pathname }: Props & { pathname: string | null })
             onClick={onNavigate}
             aria-current={active ? 'page' : undefined}
             className={cn(
-              'group focus-visible:ring-sidebar-ring relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2',
+              'group focus-visible:ring-ring/60 relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13.5px] font-medium transition-all outline-none focus-visible:ring-2',
               active
-                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                : 'text-sidebar-foreground/75 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+                ? 'text-foreground bg-gradient-to-r from-teal-500/15 to-transparent dark:from-teal-400/15'
+                : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
             )}
           >
             {active && (
               <span
                 aria-hidden="true"
-                className="bg-sidebar-primary absolute top-1/2 left-0 h-5 w-[3px] -translate-y-1/2 rounded-r-full"
+                className="bg-primary absolute top-1/2 left-0 h-5 w-[3px] -translate-y-1/2 rounded-r-full shadow-[0_0_12px_1px] shadow-teal-400/70"
               />
             )}
-            <Icon className={cn('size-[18px]', active ? 'text-sidebar-primary' : 'opacity-80')} aria-hidden="true" />
+            <Icon
+              className={cn(
+                'size-[18px] transition-colors',
+                active ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground',
+              )}
+              aria-hidden="true"
+            />
             {label}
           </Link>
         );

@@ -34,7 +34,11 @@ export async function serverGet<T>(path: string): Promise<T> {
 
   if (!response.ok || !json || !json.success) {
     const err = json && !json.success ? json.error : undefined;
-    throw new ApiError(response.status, err?.code ?? 'UNKNOWN_ERROR', err?.message ?? 'Request failed');
+    throw new ApiError(
+      response.status,
+      err?.code ?? 'UNKNOWN_ERROR',
+      err?.message ?? 'Request failed',
+    );
   }
   return json.data;
 }

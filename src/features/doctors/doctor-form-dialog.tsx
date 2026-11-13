@@ -17,7 +17,7 @@ import {
 import { FieldGroup } from '@/components/ui/field';
 import { FormField } from '@/components/shared/form-field';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Combobox } from '@/components/shared/combobox';
 import { SPECIALIZATIONS } from '@/lib/constants';
 import type { Doctor } from '@/lib/api/types';
 import { applyServerErrors } from '@/lib/forms';
@@ -29,7 +29,13 @@ import {
   type DoctorFormValues,
 } from './schema';
 
-const EMPTY: DoctorFormInput = { name: '', specialization: '' as never, hospital: '', phone: '', email: '' };
+const EMPTY: DoctorFormInput = {
+  name: '',
+  specialization: '' as never,
+  hospital: '',
+  phone: '',
+  email: '',
+};
 
 export function DoctorFormDialog({
   open,
@@ -89,8 +95,10 @@ export function DoctorFormDialog({
         ...options,
         onSuccess: (created) => {
           toast.success(`${created.name} has been added`);
-          onOpenChange(false);
-          onCreated?.(created);
+          // If the parent navigates away, let the navigation unmount the dialog. Closing first
+          // would schedule a URL update (clearing ?new) that races with — and undoes — the push.
+          if (onCreated) onCreated(created);
+          else onOpenChange(false);
         },
       });
     }
@@ -113,32 +121,43 @@ export function DoctorFormDialog({
         <form id="doctor-form" onSubmit={onSubmit} noValidate>
           <FieldGroup className="gap-4">
             <FormField label="Full name" error={errors.name?.message} htmlFor="doctor-name">
-              <Input id="doctor-name" placeholder="Dr. Farhana Rahman" autoFocus aria-invalid={!!errors.name} {...form.register('name')} />
+              <Input
+                id="doctor-name"
+                placeholder="Dr. Farhana Rahman"
+                autoFocus
+                aria-invalid={!!errors.name}
+                {...form.register('name')}
+              />
             </FormField>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Specialization" error={errors.specialization?.message} htmlFor="doctor-specialization">
+              <FormField
+                label="Specialization"
+                error={errors.specialization?.message}
+                htmlFor="doctor-specialization"
+              >
                 <Controller
                   control={form.control}
                   name="specialization"
                   render={({ field }) => (
-                    <Select value={field.value || undefined} onValueChange={field.onChange}>
-                      <SelectTrigger id="doctor-specialization" className="w-full" aria-invalid={!!errors.specialization}>
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-72">
-                        {SPECIALIZATIONS.map((specialization) => (
-                          <SelectItem key={specialization} value={specialization}>
-                            {specialization}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Combobox
+                      id="doctor-specialization"
+                      value={field.value || undefined}
+                      onChange={field.onChange}
+                      invalid={!!errors.specialization}
+                      placeholder="Select a specialty"
+                      searchPlaceholder="Search specialties…"
+                      options={SPECIALIZATIONS.map((value) => ({ value, label: value }))}
+                    />
                   )}
                 />
               </FormField>
 
-              <FormField label="Hospital" error={errors.hospital?.message} htmlFor="doctor-hospital">
+              <FormField
+                label="Hospital"
+                error={errors.hospital?.message}
+                htmlFor="doctor-hospital"
+              >
                 <Input
                   id="doctor-hospital"
                   list={hospitalListId}
@@ -147,17 +166,32 @@ export function DoctorFormDialog({
                   {...form.register('hospital')}
                 />
                 <datalist id={hospitalListId}>
-                  {hospitals?.map((hospital) => <option key={hospital} value={hospital} />)}
+                  {hospitals?.map((hospital) => (
+                    <option key={hospital} value={hospital} />
+                  ))}
                 </datalist>
               </FormField>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Phone" error={errors.phone?.message} htmlFor="doctor-phone">
-                <Input id="doctor-phone" type="tel" inputMode="tel" placeholder="01XXXXXXXXX" aria-invalid={!!errors.phone} {...form.register('phone')} />
+                <Input
+                  id="doctor-phone"
+                  type="tel"
+                  inputMode="tel"
+                  placeholder="01XXXXXXXXX"
+                  aria-invalid={!!errors.phone}
+                  {...form.register('phone')}
+                />
               </FormField>
               <FormField label="Email" error={errors.email?.message} htmlFor="doctor-email">
-                <Input id="doctor-email" type="email" placeholder="name@hospital.com" aria-invalid={!!errors.email} {...form.register('email')} />
+                <Input
+                  id="doctor-email"
+                  type="email"
+                  placeholder="name@hospital.com"
+                  aria-invalid={!!errors.email}
+                  {...form.register('email')}
+                />
               </FormField>
             </div>
           </FieldGroup>

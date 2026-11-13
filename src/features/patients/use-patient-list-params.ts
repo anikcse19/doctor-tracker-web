@@ -1,14 +1,20 @@
 'use client';
 
-import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { GENDERS, PAGE_SIZE_OPTIONS, SORT_OPTIONS } from '@/lib/constants';
-import { toApiDateRange } from '@/components/shared/date-range-filter';
+import { toApiDateRange } from '@/components/shared/filters';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 
 const parsers = {
   search: parseAsString.withDefault(''),
-  condition: parseAsString,
-  gender: parseAsStringLiteral(GENDERS),
+  condition: parseAsArrayOf(parseAsString, ',').withDefault([]),
+  gender: parseAsArrayOf(parseAsStringLiteral(GENDERS), ',').withDefault([]),
   from: parseAsString,
   to: parseAsString,
   sort: parseAsStringLiteral(SORT_OPTIONS.map((option) => option.value)).withDefault('newest'),
@@ -24,21 +30,23 @@ export function usePatientListParams() {
 
   const apiQuery = {
     search: search || undefined,
-    condition: params.condition ?? undefined,
-    gender: params.gender ?? undefined,
+    condition: params.condition.join(',') || undefined,
+    gender: params.gender.join(',') || undefined,
     ...toApiDateRange(params.from, params.to),
     sort: params.sort,
     page: Math.max(1, params.page),
     limit,
   };
 
-  const activeFilterCount = [params.search, params.condition, params.gender, params.from].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount =
+    (params.search ? 1 : 0) +
+    params.condition.length +
+    params.gender.length +
+    (params.from ? 1 : 0);
 
   const setFilter = (patch: Partial<typeof params>) => setParams({ ...patch, page: 1 });
   const reset = () =>
-    setParams({ search: '', condition: null, gender: null, from: null, to: null, page: 1 });
+    setParams({ search: '', condition: [], gender: [], from: null, to: null, page: 1 });
 
   return { params, apiQuery, setParams, setFilter, reset, activeFilterCount };
 }

@@ -1,19 +1,28 @@
 'use client';
 
-import { parseAsInteger, parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import { PAGE_SIZE_OPTIONS, SORT_OPTIONS, SPECIALIZATIONS } from '@/lib/constants';
-import { toApiDateRange } from '@/components/shared/date-range-filter';
+import { toApiDateRange } from '@/components/shared/filters';
 import { useDebouncedValue } from '@/hooks/use-debounced-value';
 
 const parsers = {
   search: parseAsString.withDefault(''),
-  specialization: parseAsStringLiteral(SPECIALIZATIONS),
-  hospital: parseAsString,
+  specialization: parseAsArrayOf(parseAsStringLiteral(SPECIALIZATIONS), ',').withDefault([]),
+  hospital: parseAsArrayOf(parseAsString, ',').withDefault([]),
   from: parseAsString,
   to: parseAsString,
   sort: parseAsStringLiteral(SORT_OPTIONS.map((option) => option.value)).withDefault('newest'),
   page: parseAsInteger.withDefault(1),
   limit: parseAsInteger.withDefault(10),
+  /** `?new=true` opens the "Add doctor" dialog (used by the ⌘K command menu). */
+  new: parseAsBoolean.withDefault(false),
 };
 
 /**
@@ -27,22 +36,24 @@ export function useDoctorListParams() {
 
   const apiQuery = {
     search: search || undefined,
-    specialization: params.specialization ?? undefined,
-    hospital: params.hospital ?? undefined,
+    specialization: params.specialization.join(',') || undefined,
+    hospital: params.hospital.join(',') || undefined,
     ...toApiDateRange(params.from, params.to),
     sort: params.sort,
     page: Math.max(1, params.page),
     limit,
   };
 
-  const activeFilterCount = [params.search, params.specialization, params.hospital, params.from].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount =
+    (params.search ? 1 : 0) +
+    params.specialization.length +
+    params.hospital.length +
+    (params.from ? 1 : 0);
 
   /** Any filter change returns to page 1 so the user never lands on an empty page. */
   const setFilter = (patch: Partial<typeof params>) => setParams({ ...patch, page: 1 });
   const reset = () =>
-    setParams({ search: '', specialization: null, hospital: null, from: null, to: null, page: 1 });
+    setParams({ search: '', specialization: [], hospital: [], from: null, to: null, page: 1 });
 
   return { params, apiQuery, setParams, setFilter, reset, activeFilterCount };
 }

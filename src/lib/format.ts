@@ -13,7 +13,10 @@ export const formatNumber = (value: number) => new Intl.NumberFormat('en-US').fo
 
 /** "Dr. Farhana Rahman" → "FR" */
 export function initials(name: string) {
-  const parts = name.replace(/^Dr\.?\s+/i, '').split(/\s+/).filter(Boolean);
+  const parts = name
+    .replace(/^Dr\.?\s+/i, '')
+    .split(/\s+/)
+    .filter(Boolean);
   return ((parts[0]?.[0] ?? '') + (parts.at(-1)?.[0] ?? '')).toUpperCase();
 }
 

@@ -21,12 +21,15 @@ export function RecentPatients({ patients }: { patients: DashboardStats['recentP
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{patient.name}</p>
               <p className="text-muted-foreground truncate text-xs">
-                {ageFromDob(patient.dateOfBirth)} yrs · {GENDER_LABELS[patient.gender]} · {patient.doctor.name}
+                {ageFromDob(patient.dateOfBirth)} yrs · {GENDER_LABELS[patient.gender]} ·{' '}
+                {patient.doctor.name}
               </p>
             </div>
             <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
               <ConditionTag condition={patient.condition} />
-              <span className="text-muted-foreground text-xs">{formatRelative(patient.createdAt)}</span>
+              <span className="text-muted-foreground text-xs">
+                {formatRelative(patient.createdAt)}
+              </span>
             </div>
             <ChevronRight className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
           </Link>

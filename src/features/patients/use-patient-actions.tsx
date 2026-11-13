@@ -16,7 +16,10 @@ export function usePatientActions({
   isDeleting,
   onDeleted,
 }: {
-  deletePatient: (id: string, options: { onSuccess: () => void; onError: (e: unknown) => void }) => void;
+  deletePatient: (
+    id: string,
+    options: { onSuccess: () => void; onError: (e: unknown) => void },
+  ) => void;
   isDeleting: boolean;
   onDeleted?: () => void;
 }) {
@@ -52,8 +55,9 @@ export function usePatientActions({
         title="Delete patient?"
         description={
           <>
-            <span className="text-foreground font-medium">{deleting?.name}</span> and their record will be
-            permanently removed from {deleting?.doctor.name}&apos;s patient list. This cannot be undone.
+            <span className="text-foreground font-medium">{deleting?.name}</span> and their record
+            will be permanently removed from {deleting?.doctor.name}&apos;s patient list. This
+            cannot be undone.
           </>
         }
         confirmLabel="Delete patient"

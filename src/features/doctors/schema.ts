@@ -10,7 +10,9 @@ export const doctorFormSchema = z.object({
     .string()
     .trim()
     .transform((value) => value.replace(/[\s-]/g, ''))
-    .pipe(z.string().regex(BD_PHONE_REGEX, 'Enter a valid Bangladeshi mobile number (01XXXXXXXXX)')),
+    .pipe(
+      z.string().regex(BD_PHONE_REGEX, 'Enter a valid Bangladeshi mobile number (01XXXXXXXXX)'),
+    ),
   email: z.email('Enter a valid email address').max(254),
 });
 

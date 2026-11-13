@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
-/** Card wrapper for list pages: toolbar on top, thin progress bar while refetching. */
+/** Glass card for list pages: toolbar on top, animated progress line while refetching. */
 export function ListCard({
   toolbar,
   isFetching,
@@ -13,15 +13,15 @@ export function ListCard({
   children: ReactNode;
 }) {
   return (
-    <section className="bg-card relative overflow-hidden rounded-xl border shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+    <section className="glass page-enter relative overflow-hidden rounded-2xl">
       <div
         aria-hidden="true"
         className={cn(
-          'bg-primary/70 absolute inset-x-0 top-0 h-0.5 origin-left transition-opacity',
+          'absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400 to-transparent transition-opacity duration-300',
           isFetching ? 'animate-pulse opacity-100' : 'opacity-0',
         )}
       />
-      {toolbar && <div className="border-b p-3 sm:p-4">{toolbar}</div>}
+      {toolbar && <div className="border-b px-3 py-3 sm:px-4">{toolbar}</div>}
       {children}
     </section>
   );
@@ -31,8 +31,8 @@ export function TableSkeleton({ rows = 8, columns = 6 }: { rows?: number; column
   return (
     <div className="divide-y" aria-busy="true" aria-label="Loading">
       {Array.from({ length: rows }, (_, row) => (
-        <div key={row} className="flex items-center gap-4 px-4 py-3.5">
-          <Skeleton className="size-9 shrink-0 rounded-full" />
+        <div key={row} className="flex items-center gap-4 px-4 py-3">
+          <Skeleton className="size-8 shrink-0 rounded-full" />
           <div className="flex-1 space-y-1.5">
             <Skeleton className="h-3.5 w-40 max-w-full" />
             <Skeleton className="h-3 w-56 max-w-full" />
@@ -46,16 +46,21 @@ export function TableSkeleton({ rows = 8, columns = 6 }: { rows?: number; column
   );
 }
 
-/** "Showing results for…" + clear-all, shown only when filters are active. */
-export function ActiveFilters({ count, onReset }: { count: number; onReset: () => void }) {
-  if (count === 0) return null;
+/** Toolbar row layout shared by list pages: search left, chips middle, sort/reset right. */
+export function ListToolbar({
+  search,
+  filters,
+  end,
+}: {
+  search: ReactNode;
+  filters: ReactNode;
+  end: ReactNode;
+}) {
   return (
-    <button
-      type="button"
-      onClick={onReset}
-      className="text-primary hover:text-primary/80 h-9 shrink-0 rounded-md px-2 text-sm font-medium whitespace-nowrap"
-    >
-      Clear filters ({count})
-    </button>
+    <div className="flex flex-col gap-2 md:flex-row md:items-center">
+      <div className="md:w-72">{search}</div>
+      <div className="flex flex-1 flex-wrap items-center gap-1.5">{filters}</div>
+      <div className="flex items-center gap-1 self-end md:self-auto">{end}</div>
+    </div>
   );
 }

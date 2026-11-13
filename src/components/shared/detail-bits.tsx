@@ -47,7 +47,7 @@ export function MiniStat({
   icon: LucideIcon;
 }) {
   return (
-    <div className="bg-card rounded-xl border p-4">
+    <div className="glass glass-hover rounded-2xl p-4">
       <div className="text-muted-foreground flex items-center justify-between text-sm">
         {label}
         <Icon className="size-4" aria-hidden="true" />

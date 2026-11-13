@@ -1,5 +1,6 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 import {
   CircleCheckIcon,
@@ -10,9 +11,10 @@ import {
 } from 'lucide-react';
 
 const Toaster = ({ ...props }: ToasterProps) => {
+  const { resolvedTheme } = useTheme();
   return (
     <Sonner
-      theme="light"
+      theme={resolvedTheme === 'light' ? 'light' : 'dark'}
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-4" />,

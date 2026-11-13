@@ -18,7 +18,7 @@ import {
 import { FieldGroup } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Combobox, SegmentedControl } from '@/components/shared/combobox';
 import { FormField } from '@/components/shared/form-field';
 import { GENDERS, GENDER_LABELS } from '@/lib/constants';
 import type { Patient } from '@/lib/api/types';
@@ -111,28 +111,45 @@ export function PatientFormDialog(props: Props) {
         <form id="patient-form" onSubmit={onSubmit} noValidate>
           <FieldGroup className="gap-4">
             <FormField label="Full name" error={errors.name?.message} htmlFor="patient-name">
-              <Input id="patient-name" placeholder="Nusrat Jahan" autoFocus aria-invalid={!!errors.name} {...form.register('name')} />
+              <Input
+                id="patient-name"
+                placeholder="Nusrat Jahan"
+                autoFocus
+                aria-invalid={!!errors.name}
+                {...form.register('name')}
+              />
             </FormField>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="Date of birth" error={errors.dateOfBirth?.message} htmlFor="patient-dob">
-                <Input id="patient-dob" type="date" max={today()} aria-invalid={!!errors.dateOfBirth} {...form.register('dateOfBirth')} />
+              <FormField
+                label="Date of birth"
+                error={errors.dateOfBirth?.message}
+                htmlFor="patient-dob"
+              >
+                <Input
+                  id="patient-dob"
+                  type="date"
+                  max={today()}
+                  aria-invalid={!!errors.dateOfBirth}
+                  {...form.register('dateOfBirth')}
+                />
               </FormField>
               <FormField label="Gender" error={errors.gender?.message} htmlFor="patient-gender">
                 <Controller
                   control={form.control}
                   name="gender"
                   render={({ field }) => (
-                    <Select value={field.value || undefined} onValueChange={field.onChange}>
-                      <SelectTrigger id="patient-gender" className="w-full" aria-invalid={!!errors.gender}>
-                        <SelectValue placeholder="Select…" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {GENDERS.map((gender) => (
-                          <SelectItem key={gender} value={gender}>{GENDER_LABELS[gender]}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <SegmentedControl
+                      id="patient-gender"
+                      label="Gender"
+                      value={field.value || undefined}
+                      onChange={field.onChange}
+                      invalid={!!errors.gender}
+                      options={GENDERS.map((gender) => ({
+                        value: gender,
+                        label: GENDER_LABELS[gender],
+                      }))}
+                    />
                   )}
                 />
               </FormField>
@@ -140,14 +157,36 @@ export function PatientFormDialog(props: Props) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="Phone" error={errors.phone?.message} htmlFor="patient-phone">
-                <Input id="patient-phone" type="tel" inputMode="tel" placeholder="01XXXXXXXXX" aria-invalid={!!errors.phone} {...form.register('phone')} />
+                <Input
+                  id="patient-phone"
+                  type="tel"
+                  inputMode="tel"
+                  placeholder="01XXXXXXXXX"
+                  aria-invalid={!!errors.phone}
+                  {...form.register('phone')}
+                />
               </FormField>
-              <FormField label="Email" optional error={errors.email?.message} htmlFor="patient-email">
-                <Input id="patient-email" type="email" placeholder="name@example.com" aria-invalid={!!errors.email} {...form.register('email')} />
+              <FormField
+                label="Email"
+                optional
+                error={errors.email?.message}
+                htmlFor="patient-email"
+              >
+                <Input
+                  id="patient-email"
+                  type="email"
+                  placeholder="name@example.com"
+                  aria-invalid={!!errors.email}
+                  {...form.register('email')}
+                />
               </FormField>
             </div>
 
-            <FormField label="Medical condition" error={errors.condition?.message} htmlFor="patient-condition">
+            <FormField
+              label="Medical condition"
+              error={errors.condition?.message}
+              htmlFor="patient-condition"
+            >
               <Input
                 id="patient-condition"
                 list={conditionListId}
@@ -156,36 +195,54 @@ export function PatientFormDialog(props: Props) {
                 {...form.register('condition')}
               />
               <datalist id={conditionListId}>
-                {conditions?.map((condition) => <option key={condition} value={condition} />)}
+                {conditions?.map((condition) => (
+                  <option key={condition} value={condition} />
+                ))}
               </datalist>
             </FormField>
 
             {isEdit && (
-              <FormField label="Assigned doctor" error={errors.doctor?.message} htmlFor="patient-doctor">
+              <FormField
+                label="Assigned doctor"
+                error={errors.doctor?.message}
+                htmlFor="patient-doctor"
+              >
                 <Controller
                   control={form.control}
                   name="doctor"
                   render={({ field }) => (
-                    <Select value={field.value || undefined} onValueChange={field.onChange} disabled={doctorsLoading}>
-                      <SelectTrigger id="patient-doctor" className="w-full" aria-invalid={!!errors.doctor}>
-                        <SelectValue placeholder={doctorsLoading ? 'Loading doctors…' : 'Select a doctor'} />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-72">
-                        {doctors?.map((doctor) => (
-                          <SelectItem key={doctor._id} value={doctor._id}>
-                            {doctor.name}
-                            <span className="text-muted-foreground"> · {doctor.specialization}</span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Combobox
+                      id="patient-doctor"
+                      value={field.value || undefined}
+                      onChange={field.onChange}
+                      disabled={doctorsLoading}
+                      invalid={!!errors.doctor}
+                      placeholder={doctorsLoading ? 'Loading doctors…' : 'Select a doctor'}
+                      searchPlaceholder="Search doctors or specialties…"
+                      options={(doctors ?? []).map((doctor) => ({
+                        value: doctor._id,
+                        label: doctor.name,
+                        hint: doctor.specialization,
+                      }))}
+                    />
                   )}
                 />
               </FormField>
             )}
 
-            <FormField label="Clinical notes" optional error={errors.notes?.message} htmlFor="patient-notes">
-              <Textarea id="patient-notes" rows={3} placeholder="Relevant history, follow-up plan…" aria-invalid={!!errors.notes} {...form.register('notes')} />
+            <FormField
+              label="Clinical notes"
+              optional
+              error={errors.notes?.message}
+              htmlFor="patient-notes"
+            >
+              <Textarea
+                id="patient-notes"
+                rows={3}
+                placeholder="Relevant history, follow-up plan…"
+                aria-invalid={!!errors.notes}
+                {...form.register('notes')}
+              />
             </FormField>
           </FieldGroup>
         </form>

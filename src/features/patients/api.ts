@@ -51,7 +51,8 @@ function useInvalidateCareData() {
 export function useUpdatePatient(id: string) {
   const invalidate = useInvalidateCareData();
   return useMutation({
-    mutationFn: (values: Partial<PatientEditValues>) => api.patch<Patient>(`/patients/${id}`, values),
+    mutationFn: (values: Partial<PatientEditValues>) =>
+      api.patch<Patient>(`/patients/${id}`, values),
     onSuccess: invalidate,
   });
 }

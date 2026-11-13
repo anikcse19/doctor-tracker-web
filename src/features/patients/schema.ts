@@ -14,9 +14,16 @@ export const patientFormSchema = z.object({
     .string()
     .trim()
     .transform((value) => value.replace(/[\s-]/g, ''))
-    .pipe(z.string().regex(BD_PHONE_REGEX, 'Enter a valid Bangladeshi mobile number (01XXXXXXXXX)')),
+    .pipe(
+      z.string().regex(BD_PHONE_REGEX, 'Enter a valid Bangladeshi mobile number (01XXXXXXXXX)'),
+    ),
   email: z.union([z.literal(''), z.email('Enter a valid email address')]),
-  condition: z.string().trim().min(2, 'Medical condition is required').max(100),
+  condition: z
+    .string()
+    .trim()
+    .min(2, 'Medical condition is required')
+    .max(100)
+    .refine((value) => !value.includes(','), 'Enter a single primary condition (no commas)'),
   notes: z.string().trim().max(1000, 'Notes must be under 1000 characters'),
 });
 

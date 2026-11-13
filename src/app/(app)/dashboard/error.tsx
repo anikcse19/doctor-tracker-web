@@ -11,7 +11,7 @@ const dashboardError = new ApiError(
 
 export default function DashboardError({ reset }: { error: Error; reset: () => void }) {
   return (
-    <div className="bg-card rounded-xl border">
+    <div className="glass page-enter rounded-2xl">
       <ErrorState error={dashboardError} onRetry={reset} />
     </div>
   );

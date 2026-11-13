@@ -1,20 +1,30 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Plus, SearchX, Stethoscope, Users } from 'lucide-react';
+import { ArrowUpRight, Plus, SearchX, Stethoscope } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { PageHeader } from '@/components/shared/page-header';
-import { ActiveFilters, ListCard, TableSkeleton } from '@/components/shared/list-card';
+import { ListCard, ListToolbar, TableSkeleton } from '@/components/shared/list-card';
 import { SearchInput } from '@/components/shared/search-input';
-import { FilterSelect } from '@/components/shared/filter-select';
-import { DateRangeFilter } from '@/components/shared/date-range-filter';
+import {
+  DateRangeChip,
+  FacetedFilter,
+  ResetFiltersButton,
+  SortMenu,
+} from '@/components/shared/filters';
 import { Pagination } from '@/components/shared/pagination';
 import { EmptyState, ErrorState } from '@/components/shared/states';
 import { InitialsAvatar, Tag } from '@/components/shared/badges';
-import { SORT_OPTIONS, SPECIALIZATIONS } from '@/lib/constants';
+import { SPECIALIZATIONS } from '@/lib/constants';
 import { formatDate, formatNumber, formatPhone } from '@/lib/format';
 import type { DoctorListItem } from '@/lib/api/types';
 import { useDoctors, useHospitals } from './api';
@@ -25,10 +35,13 @@ const specializationOptions = SPECIALIZATIONS.map((value) => ({ value, label: va
 
 export function DoctorsView() {
   const router = useRouter();
-  const [createOpen, setCreateOpen] = useState(false);
-  const { params, apiQuery, setParams, setFilter, reset, activeFilterCount } = useDoctorListParams();
-  const { data, isPending, isError, error, refetch, isFetching, isPlaceholderData } = useDoctors(apiQuery);
+  const { params, apiQuery, setParams, setFilter, reset, activeFilterCount } =
+    useDoctorListParams();
+  const { data, isPending, isError, error, refetch, isFetching, isPlaceholderData } =
+    useDoctors(apiQuery);
   const { data: hospitals = [] } = useHospitals();
+  const createOpen = params.new;
+  const setCreateOpen = (open: boolean) => setParams({ new: open || null });
 
   const doctors = data?.items ?? [];
 
@@ -37,10 +50,15 @@ export function DoctorsView() {
       <PageHeader
         title="Doctors"
         description={
-          data ? `${formatNumber(data.meta.total)} doctors in your care network` : 'Your care network'
+          data
+            ? `${formatNumber(data.meta.total)} doctors in your care network`
+            : 'Your care network'
         }
         actions={
-          <Button onClick={() => setCreateOpen(true)}>
+          <Button
+            onClick={() => setCreateOpen(true)}
+            className="shadow-[0_0_24px_-6px] shadow-teal-400/60"
+          >
             <Plus /> Add doctor
           </Button>
         }
@@ -49,49 +67,41 @@ export function DoctorsView() {
       <ListCard
         isFetching={isFetching && (isPlaceholderData || !isPending)}
         toolbar={
-          <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-            <SearchInput
-              value={params.search}
-              onChange={(search) => setFilter({ search })}
-              placeholder="Search name, email, phone or hospital…"
-              className="lg:max-w-xs lg:flex-1"
-            />
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:flex lg:flex-1 lg:justify-end">
-              <FilterSelect
-                label="Filter by specialization"
-                allLabel="All specializations"
-                value={params.specialization}
-                options={specializationOptions}
-                onChange={(value) => setFilter({ specialization: value as typeof params.specialization })}
-                className="lg:w-48"
+          <ListToolbar
+            search={
+              <SearchInput
+                value={params.search}
+                onChange={(search) => setFilter({ search })}
+                placeholder="Search name, email, phone, hospital…"
               />
-              <FilterSelect
-                label="Filter by hospital"
-                allLabel="All hospitals"
-                value={params.hospital}
-                options={hospitals.map((value) => ({ value, label: value }))}
-                onChange={(hospital) => setFilter({ hospital })}
-                className="lg:w-48"
-              />
-              <div className="lg:w-48">
-                <DateRangeFilter
+            }
+            filters={
+              <>
+                <FacetedFilter
+                  title="Specialty"
+                  options={specializationOptions}
+                  selected={params.specialization}
+                  onChange={(value) =>
+                    setFilter({ specialization: value as typeof params.specialization })
+                  }
+                />
+                <FacetedFilter
+                  title="Hospital"
+                  options={hospitals.map((value) => ({ value, label: value }))}
+                  selected={params.hospital}
+                  onChange={(hospital) => setFilter({ hospital })}
+                />
+                <DateRangeChip
+                  title="Joined"
                   from={params.from}
                   to={params.to}
                   onChange={(range) => setFilter(range)}
-                  label="Joined"
                 />
-              </div>
-              <FilterSelect
-                label="Sort doctors"
-                allLabel="Newest first"
-                value={params.sort === 'newest' ? null : params.sort}
-                options={SORT_OPTIONS.filter((option) => option.value !== 'newest')}
-                onChange={(value) => setParams({ sort: (value ?? 'newest') as typeof params.sort, page: 1 })}
-                className="lg:w-40"
-              />
-            </div>
-            <ActiveFilters count={activeFilterCount} onReset={reset} />
-          </div>
+                <ResetFiltersButton count={activeFilterCount} onReset={reset} />
+              </>
+            }
+            end={<SortMenu value={params.sort} onChange={(sort) => setParams({ sort, page: 1 })} />}
+          />
         }
       >
         {isPending ? (
@@ -104,29 +114,38 @@ export function DoctorsView() {
               icon={SearchX}
               title="No doctors match your filters"
               description="Try a different search term or remove some filters."
-              action={<Button variant="outline" onClick={reset}>Clear filters</Button>}
+              action={
+                <Button variant="outline" onClick={reset}>
+                  Clear filters
+                </Button>
+              }
             />
           ) : (
             <EmptyState
               icon={Stethoscope}
               title="No doctors yet"
               description="Add your first doctor to start assigning patients."
-              action={<Button onClick={() => setCreateOpen(true)}><Plus /> Add doctor</Button>}
+              action={
+                <Button onClick={() => setCreateOpen(true)}>
+                  <Plus /> Add doctor
+                </Button>
+              }
             />
           )
         ) : (
           <>
-            {/* Desktop / tablet table */}
             <Table className="hidden md:table">
               <TableHeader>
-                <TableRow className="bg-muted/40 hover:bg-muted/40">
+                <TableRow className="hover:bg-transparent">
                   <TableHead className="pl-4">Doctor</TableHead>
-                  <TableHead>Specialization</TableHead>
+                  <TableHead>Specialty</TableHead>
                   <TableHead className="hidden xl:table-cell">Hospital</TableHead>
                   <TableHead className="hidden lg:table-cell">Phone</TableHead>
                   <TableHead className="text-right">Patients</TableHead>
                   <TableHead className="hidden lg:table-cell">Joined</TableHead>
-                  <TableHead className="w-10"><span className="sr-only">Open</span></TableHead>
+                  <TableHead className="w-10">
+                    <span className="sr-only">Open</span>
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -143,7 +162,7 @@ export function DoctorsView() {
                           <Link
                             href={`/doctors/${doctor._id}`}
                             onClick={(event) => event.stopPropagation()}
-                            className="block truncate font-medium hover:underline"
+                            className="group-hover:text-primary block truncate font-medium transition-colors"
                           >
                             {doctor.name}
                           </Link>
@@ -151,7 +170,9 @@ export function DoctorsView() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell><Tag>{doctor.specialization}</Tag></TableCell>
+                    <TableCell>
+                      <Tag>{doctor.specialization}</Tag>
+                    </TableCell>
                     <TableCell className="text-muted-foreground hidden max-w-56 truncate xl:table-cell">
                       {doctor.hospital}
                     </TableCell>
@@ -159,20 +180,19 @@ export function DoctorsView() {
                       {formatPhone(doctor.phone)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <PatientCount count={doctor.patientCount} />
+                      <PatientLoad count={doctor.patientCount} />
                     </TableCell>
                     <TableCell className="text-muted-foreground hidden lg:table-cell">
                       {formatDate(doctor.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <ChevronRight className="text-muted-foreground size-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                      <ArrowUpRight className="text-muted-foreground size-4 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100" />
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
 
-            {/* Mobile cards */}
             <ul className="divide-y md:hidden">
               {doctors.map((doctor) => (
                 <li key={doctor._id}>
@@ -202,11 +222,20 @@ export function DoctorsView() {
   );
 }
 
-function PatientCount({ count }: { count: number }) {
+/** Patient count with a tiny load bar (relative to a 40-patient reference caseload). */
+function PatientLoad({ count }: { count: number }) {
   return (
-    <span className="tabular inline-flex items-center gap-1.5 font-medium">
-      <Users className="text-muted-foreground size-3.5" aria-hidden="true" />
-      {count}
+    <span className="inline-flex items-center justify-end gap-2.5">
+      <span
+        aria-hidden="true"
+        className="bg-muted hidden h-1.5 w-14 overflow-hidden rounded-full lg:block"
+      >
+        <span
+          className="block h-full rounded-full bg-gradient-to-r from-teal-500 to-teal-300"
+          style={{ width: `${Math.min(100, (count / 40) * 100)}%` }}
+        />
+      </span>
+      <span className="tabular w-6 text-right font-semibold">{count}</span>
       <span className="sr-only">patients</span>
     </span>
   );
@@ -214,7 +243,10 @@ function PatientCount({ count }: { count: number }) {
 
 function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
   return (
-    <Link href={`/doctors/${doctor._id}`} className="hover:bg-muted/40 flex items-center gap-3 px-4 py-3.5">
+    <Link
+      href={`/doctors/${doctor._id}`}
+      className="hover:bg-muted/50 flex items-center gap-3 px-4 py-3.5 transition-colors"
+    >
       <InitialsAvatar name={doctor.name} />
       <div className="min-w-0 flex-1 space-y-1">
         <p className="truncate font-medium">{doctor.name}</p>
@@ -223,8 +255,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
           <span className="text-muted-foreground truncate text-xs">{doctor.hospital}</span>
         </div>
       </div>
-      <PatientCount count={doctor.patientCount} />
-      <ChevronRight className="text-muted-foreground size-4" aria-hidden="true" />
+      <PatientLoad count={doctor.patientCount} />
     </Link>
   );
 }

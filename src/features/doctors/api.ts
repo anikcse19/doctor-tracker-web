@@ -13,7 +13,8 @@ export const doctorKeys = {
   all: ['doctors'] as const,
   list: (query: Query) => [...doctorKeys.all, 'list', query] as const,
   detail: (id: string) => [...doctorKeys.all, 'detail', id] as const,
-  patients: (id: string, query: Query) => [...doctorKeys.all, 'detail', id, 'patients', query] as const,
+  patients: (id: string, query: Query) =>
+    [...doctorKeys.all, 'detail', id, 'patients', query] as const,
   options: () => [...doctorKeys.all, 'options'] as const,
   hospitals: () => [...doctorKeys.all, 'hospitals'] as const,
 };
@@ -78,7 +79,8 @@ export function useUpdateDoctor(id: string) {
 export function useAddPatientToDoctor(doctorId: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (values: PatientFormValues) => api.post<Patient>(`/doctors/${doctorId}/patients`, values),
+    mutationFn: (values: PatientFormValues) =>
+      api.post<Patient>(`/doctors/${doctorId}/patients`, values),
     onSuccess: () =>
       Promise.all([
         queryClient.invalidateQueries({ queryKey: doctorKeys.all }),

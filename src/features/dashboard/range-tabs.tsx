@@ -13,8 +13,14 @@ export function RangeTabs({ current }: { current: number }) {
 
   return (
     <div className="flex items-center gap-2">
-      {pending && <Loader2 className="text-muted-foreground size-4 animate-spin" aria-label="Updating" />}
-      <div role="tablist" aria-label="Trend range" className="bg-muted inline-flex rounded-lg p-0.5">
+      {pending && (
+        <Loader2 className="text-muted-foreground size-4 animate-spin" aria-label="Updating" />
+      )}
+      <div
+        role="tablist"
+        aria-label="Trend range"
+        className="bg-muted inline-flex rounded-lg p-0.5"
+      >
         {TREND_RANGES.map((range) => (
           <button
             key={range.value}
@@ -22,12 +28,14 @@ export function RangeTabs({ current }: { current: number }) {
             type="button"
             aria-selected={current === range.value}
             onClick={() =>
-              startTransition(() => router.replace(`/dashboard?range=${range.value}`, { scroll: false }))
+              startTransition(() =>
+                router.replace(`/dashboard?range=${range.value}`, { scroll: false }),
+              )
             }
             className={cn(
               'rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
               current === range.value
-                ? 'text-foreground bg-white shadow-sm'
+                ? 'text-foreground bg-background shadow-sm ring-1 ring-black/5 dark:bg-white/10 dark:ring-white/10'
                 : 'text-muted-foreground hover:text-foreground',
             )}
           >

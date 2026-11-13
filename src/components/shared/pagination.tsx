@@ -2,7 +2,13 @@
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { PAGE_SIZE_OPTIONS } from '@/lib/constants';
 import type { PaginationMeta } from '@/lib/api/types';
 import { formatNumber } from '@/lib/format';
@@ -31,7 +37,10 @@ export function Pagination({
       <div className="flex items-center gap-3">
         <div className="hidden items-center gap-2 sm:flex">
           <span className="text-muted-foreground text-sm">Rows</span>
-          <Select value={String(meta.limit)} onValueChange={(value) => onLimitChange(Number(value))}>
+          <Select
+            value={String(meta.limit)}
+            onValueChange={(value) => onLimitChange(Number(value))}
+          >
             <SelectTrigger size="sm" className="w-[72px]" aria-label="Rows per page">
               <SelectValue />
             </SelectTrigger>

@@ -79,7 +79,10 @@ export interface DashboardStats {
   conditions: { condition: string; count: number }[];
   genders: { gender: Gender; count: number }[];
   ageGroups: { label: string; count: number }[];
-  recentPatients: (Pick<Patient, '_id' | 'name' | 'gender' | 'condition' | 'dateOfBirth' | 'createdAt'> & {
+  recentPatients: (Pick<
+    Patient,
+    '_id' | 'name' | 'gender' | 'condition' | 'dateOfBirth' | 'createdAt'
+  > & {
     doctor: Pick<Doctor, '_id' | 'name' | 'specialization'>;
   })[];
 }

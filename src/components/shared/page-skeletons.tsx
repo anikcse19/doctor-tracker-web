@@ -11,7 +11,7 @@ export function ListPageSkeleton() {
         </div>
         <Skeleton className="h-8 w-28" />
       </div>
-      <div className="bg-card overflow-hidden rounded-xl border">
+      <div className="glass overflow-hidden rounded-2xl">
         <div className="flex gap-2 border-b p-4">
           <Skeleton className="h-9 flex-1" />
           <Skeleton className="hidden h-9 w-40 sm:block" />
@@ -27,7 +27,7 @@ export function DetailPageSkeleton() {
   return (
     <div aria-busy="true" aria-label="Loading" className="space-y-6">
       <Skeleton className="h-4 w-32" />
-      <div className="bg-card flex items-center gap-4 rounded-xl border p-6">
+      <div className="glass flex items-center gap-4 rounded-2xl p-6">
         <Skeleton className="size-16 rounded-full" />
         <div className="flex-1 space-y-2">
           <Skeleton className="h-6 w-56" />
